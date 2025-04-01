@@ -1,0 +1,10 @@
+[MESSAGES CONTROL]
+disable=
+    missing-docstring,
+    too-many-arguments,
+    line-too-long,
+    missing-module-docstring,
+    missing-function-docstring
+
+[FORMAT]
+max-line-length=120
