@@ -5,7 +5,8 @@ disable=
     line-too-long,
     missing-module-docstring,
     missing-function-docstring,
-    import-error
+    import-error,
+    too-few-public-methods
 
 [FORMAT]
 max-line-length=120

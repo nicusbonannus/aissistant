@@ -8,4 +8,3 @@ router = APIRouter()
 def describe_today():
     events_manager = EventsManager()
     return {"summary": events_manager.today_s_summary()}
-
