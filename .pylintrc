@@ -4,7 +4,8 @@ disable=
     too-many-arguments,
     line-too-long,
     missing-module-docstring,
-    missing-function-docstring
+    missing-function-docstring,
+    import-error
 
 [FORMAT]
 max-line-length=120
