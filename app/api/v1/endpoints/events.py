@@ -4,6 +4,7 @@ from app.services.events_manager import EventsManager
 
 router = APIRouter()
 
+
 @router.get("/today", status_code=status.HTTP_200_OK)
 def describe_today():
     events_manager = EventsManager()
