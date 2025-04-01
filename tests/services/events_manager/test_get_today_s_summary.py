@@ -1,7 +1,7 @@
 from app.services.events_manager import EventsManager
 
 
-class TestGetTodaysSummary:
+class TestGetTodaySSummary:
     def test_get_today_s_summary__happy_path(self):
         # given
         events_manager = EventsManager()

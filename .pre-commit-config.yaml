@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/psf/black
-    rev: 24.3.0  # Usa la última versión estable
+    rev: 24.3.0
     hooks:
       - id: black
 
@@ -13,3 +13,12 @@ repos:
     rev: 6.1.0
     hooks:
       - id: flake8
+  - repo: https://github.com/myint/autoflake
+    rev: v1.7.8
+    hooks:
+      - id: autoflake
+        language_version: python3.10
+        args:
+          - --in-place
+          - --remove-all-unused-imports
+          - --ignore-init-module-imports
