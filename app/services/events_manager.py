@@ -20,5 +20,5 @@ class EventsManager:
             ),
         ]
 
-    def today_s_summary(self):
-        return LLMHandler().analyze_agenda()
+    def today_s_summary(self) -> str:
+        return LLMHandler().analyze_agenda(agenda=self.day_agenda())

@@ -13,6 +13,7 @@ repos:
     rev: 6.1.0
     hooks:
       - id: flake8
+        args: ["--ignore=E501"]
   - repo: https://github.com/myint/autoflake
     rev: v1.7.8
     hooks:
