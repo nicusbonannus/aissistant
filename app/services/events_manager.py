@@ -1,5 +1,7 @@
 import datetime
 
+from app.services.llm_handler import LLMHandler
+
 
 class EventsManager:
     def day_agenda(self):
@@ -19,4 +21,4 @@ class EventsManager:
         ]
 
     def today_s_summary(self):
-        return "Today you have to work the whole day"
+        return LLMHandler().analyze_agenda()

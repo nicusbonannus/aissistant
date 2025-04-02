@@ -1,3 +1,4 @@
+import openai
 from pydantic_settings import BaseSettings
 
 
@@ -15,3 +16,5 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+openai.api_key = settings.llm_secret_key
