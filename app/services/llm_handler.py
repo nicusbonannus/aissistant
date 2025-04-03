@@ -9,15 +9,20 @@ class LLMHandler:
     def analyze_agenda(self, agenda) -> str:
         initial_context = (
             f"Eres un asistente que se encarga de llevar mi agenda. "
-            f"Y mi agenda es: {str(agenda)}"
+            f"Me gusta trabajar de 9 a 18, con una hora de almuerzo entre la 12 y las 14hs."
+            f"Me levanto a las 6.40, no me gusta hacer cosas despues de las 20hs"
+            f"Y mi agenda es: {str(agenda)}. "
         )
         response = client.chat.completions.create(
             model="deepseek-ai/DeepSeek-V3",
-            max_tokens=100,
+            max_tokens=400,
             temperature=0.7,
             messages=[
                 {"role": "system", "content": initial_context},
-                {"role": "user", "content": "¿Que planes tengo hoy?"},
+                {
+                    "role": "user",
+                    "content": "¿En que momento mañana puedo ir a la ferreteria?",
+                },
             ],
         )
 
