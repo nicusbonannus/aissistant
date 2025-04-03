@@ -5,5 +5,4 @@ This script generates the token.json based on the client.json created on the Goo
 Run it like:
 $ python auth.py
 """
-
 get_google_calendar_token()

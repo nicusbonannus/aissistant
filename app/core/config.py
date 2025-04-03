@@ -4,8 +4,8 @@ from pydantic_settings import BaseSettings
 
 # Obtener la ruta absoluta basada en la ubicación del script
 BASE_DIR = Path(__file__).resolve().parent.parent
-google_client_json_path = str(BASE_DIR / "client.json")
-google_token_json_path = str(BASE_DIR / "token.json")
+GOOGLE_CLIENT_JSON_PATH = str(BASE_DIR / "client.json")
+GOOGLE_TOKEN_JSON_PATH = str(BASE_DIR / "token.json")
 
 
 class Settings(BaseSettings):
@@ -15,8 +15,8 @@ class Settings(BaseSettings):
     secret_key: str = ""
     debug: bool = True
     llm_secret_key: str = ""
-    google_client_json_path: str = google_client_json_path
-    google_token_json_path: str = google_token_json_path
+    GOOGLE_CLIENT_JSON_PATH: str = GOOGLE_CLIENT_JSON_PATH
+    GOOGLE_TOKEN_JSON_PATH: str = GOOGLE_TOKEN_JSON_PATH
 
     class Config:
         env_file = ".env"
