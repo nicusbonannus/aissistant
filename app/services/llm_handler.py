@@ -1,9 +1,29 @@
+from langchain.agents import AgentType, initialize_agent
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage
+from langchain_core.tools import StructuredTool
+from pydantic import BaseModel, Field
 
 from app.core.config import settings
 
 # client = OpenAI(api_key=settings.llm_secret_key, base_url="https://api.kluster.ai/v1")
+
+
+class DiscountInput(BaseModel):
+    price: float = Field(..., description="Precio original del producto")
+    percentage: float = Field(..., description="Porcentaje de descuento a aplicar")
+
+
+def calculate_discount(price: float, percentage: float) -> float:
+    return price * (1 - percentage / 100)
+
+
+discount_tool = StructuredTool(
+    name="Calculadora de descuentos",
+    description="Calcula el precio final despues de aplicar un descuento",
+    func=calculate_discount,
+    args_schema=DiscountInput,
+)
 
 
 class LLMHandler:
@@ -26,3 +46,15 @@ class LLMHandler:
         response = self._llm(messages)
 
         return response.content
+
+    def tool_example(self, price: float, discount: float) -> float:
+        agent = initialize_agent(
+            tools=[discount_tool],
+            llm=self._llm,
+            agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
+            verbose=True,
+        )
+
+        question = "Si un producto cuesta $100 y tiene un 20% de descuento, cual es el precio final?"
+        response = agent.run(question)
+        return response
