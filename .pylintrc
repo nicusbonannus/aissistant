@@ -7,7 +7,9 @@ disable=
     missing-function-docstring,
     import-error,
     too-few-public-methods,
-    use-dict-literal
+    use-dict-literal,
+    unspecified-encoding,
+    pointless-string-statement
 
 [FORMAT]
 max-line-length=120
