@@ -36,11 +36,26 @@ class LLMHandler:
             openai_api_base=settings.LLM_PROVIDER_URL,
         )
 
-    def analyze_agenda(self, agenda) -> str:
+    def find_spot(self, agenda) -> str:
         initial_context = f"{settings.LLM_SYSTEM_PROMPT} Mi agenda es: {str(agenda)}."
         messages = [
             SystemMessage(content=initial_context),
             HumanMessage("¿En que momento mañana puedo ir a la ferreteria?"),
+        ]
+
+        response = self._llm(messages)
+
+        return response.content
+
+    def analyze_agenda(self, agenda_events: list) -> str:
+        initial_context = (
+            f"{settings.LLM_SYSTEM_PROMPT} Mi agenda es: {str(agenda_events)}."
+        )
+        messages = [
+            SystemMessage(content=initial_context),
+            HumanMessage(
+                "Resumi mi agenda, decime si es un dia cargado, un dia cargado tiene mas de 2 eventos."
+            ),
         ]
 
         response = self._llm(messages)
@@ -55,6 +70,6 @@ class LLMHandler:
             verbose=True,
         )
 
-        question = "Si un producto cuesta $100 y tiene un 20% de descuento, cual es el precio final?"
+        question = f"Si un producto cuesta ${price} y tiene un {discount}% de descuento, cual es el precio final?"
         response = agent.run(question)
         return response
