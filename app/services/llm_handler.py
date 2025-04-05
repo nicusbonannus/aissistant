@@ -1,7 +1,7 @@
 from langchain.agents import AgentType, initialize_agent
-from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage
 from langchain_core.tools import StructuredTool
+from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 
 from app.core.config import settings
@@ -29,21 +29,22 @@ discount_tool = StructuredTool(
 class LLMHandler:
     def __init__(self):
         self._llm = ChatOpenAI(
-            model_name=settings.LLM_MODEL_NAME,
+            model=settings.LLM_MODEL_NAME,
             max_tokens=400,
             temperature=0.7,
-            openai_api_key=settings.LLM_SECRET_KEY,
-            openai_api_base=settings.LLM_PROVIDER_URL,
+            api_key=settings.LLM_SECRET_KEY,
+            base_url=settings.LLM_PROVIDER_URL,
         )
 
-    def find_spot(self, agenda) -> str:
+    def find_spot(self, agenda, event_description: str) -> str:
         initial_context = f"{settings.LLM_SYSTEM_PROMPT} Mi agenda es: {str(agenda)}."
+        message = f"¿En que momento mañana puedo hacer este evento:{event_description}?"
         messages = [
             SystemMessage(content=initial_context),
-            HumanMessage("¿En que momento mañana puedo ir a la ferreteria?"),
+            HumanMessage(message),
         ]
 
-        response = self._llm(messages)
+        response = self._llm.invoke(messages)
 
         return response.content
 
@@ -58,7 +59,7 @@ class LLMHandler:
             ),
         ]
 
-        response = self._llm(messages)
+        response = self._llm.invoke(messages)
 
         return response.content
 

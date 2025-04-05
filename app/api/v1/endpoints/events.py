@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from pydantic import BaseModel, Field
 
 from app.api.v1.deps.events_params import RequestByDateRangeParams
@@ -14,9 +14,14 @@ class DiscountInfo(BaseModel):
 
 
 @router.get("/find_spot", status_code=status.HTTP_200_OK)
-def describe_today():
+def find_spor(
+    event: str = Query(
+        max_length=200,
+        description="Description of the eevent i not more than 200 characters",
+    )
+):
     events_manager = EventsManager()
-    return {"summary": events_manager.today_s_summary()}
+    return {"summary": events_manager.find_spot(event_description=event)}
 
 
 @router.get("/agenda", status_code=status.HTTP_200_OK)

@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from typing import Tuple
 
 import pytz
 from googleapiclient.discovery import build
@@ -10,22 +11,14 @@ class CalendarReader:
     def get_calendar_events(self, start: datetime = None, end: datetime = None):
         creds = get_google_calendar_token()
         service = build("calendar", "v3", credentials=creds)
-        tz = pytz.timezone("America/Argentina/Buenos_Aires")
-        now = datetime.now(tz)
-        start_of_day = (
-            start.replace(tzinfo=tz)
-            or now.replace(hour=0, minute=0, second=0, microsecond=0)
-        ).isoformat()
-        end_of_day = (
-            end.replace(tzinfo=tz)
-            or now.replace(hour=23, minute=59, second=59, microsecond=999999)
-        ).isoformat()
+
+        start_date, end_date = self.format_dates(start, end)
         events_result = (
             service.events()
             .list(
                 calendarId="primary",
-                timeMin=start_of_day,
-                timeMax=end_of_day,
+                timeMin=start_date,
+                timeMax=end_date,
                 singleEvents=True,
                 orderBy="startTime",
             )
@@ -42,3 +35,20 @@ class CalendarReader:
             )
 
         return calendar_events
+
+    @staticmethod
+    def format_dates(
+        start_date: datetime = None, end_date: datetime = None
+    ) -> Tuple[str, str]:
+        tz = pytz.timezone("America/Argentina/Buenos_Aires")
+        if start_date is None:
+            start_date = datetime.now().replace(
+                hour=0, minute=0, second=0, microsecond=0
+            )
+        start_date = start_date.replace(tzinfo=tz)
+        if end_date is None:
+            end_date = (datetime.now() + timedelta(days=1)).replace(
+                hour=0, minute=0, second=0, microsecond=0
+            )
+        end_date = end_date.replace(tzinfo=tz)
+        return start_date.isoformat(), end_date.isoformat()
