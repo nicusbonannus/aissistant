@@ -6,8 +6,6 @@ from pydantic import BaseModel, Field
 
 from app.core.config import settings
 
-# client = OpenAI(api_key=settings.llm_secret_key, base_url="https://api.kluster.ai/v1")
-
 
 class DiscountInput(BaseModel):
     price: float = Field(..., description="Precio original del producto")

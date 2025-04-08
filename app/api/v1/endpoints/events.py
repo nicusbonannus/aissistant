@@ -1,7 +1,11 @@
 from fastapi import APIRouter, Depends, Query, status
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
 from app.api.v1.deps.events_params import RequestByDateRangeParams
+from app.db import crud
+from app.db.database import SessionLocal
+from app.db.schemas import UserCreate
 from app.services.events_manager import EventsManager
 from app.services.llm_handler import LLMHandler
 
@@ -41,3 +45,31 @@ def calculate_discount(discount_info: DiscountInfo):
     )
 
     return {"response": response}
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+class CreateUserInfo(BaseModel):
+    name: str = Field(...)
+    email: str = Field(...)
+
+
+class UserInformation(BaseModel):
+    id: int = Field(...)
+    name: str = Field(...)
+    email: str = Field(...)
+
+
+@router.post(
+    "/user", status_code=status.HTTP_201_CREATED, response_model=UserInformation
+)
+def create_user(user_info: CreateUserInfo, db: Session = Depends(get_db)):
+    user_create = UserCreate(name=user_info.name, email=user_info.email)
+    response = crud.create_user(db, user_create)
+    return UserInformation(name=response.name, email=response.email, id=response.id)

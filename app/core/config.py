@@ -2,7 +2,7 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings
 
-# Obtener la ruta absoluta basada en la ubicación del script
+# Defines the absolute route for these files
 BASE_DIR = Path(__file__).resolve().parent.parent
 GOOGLE_CLIENT_JSON_PATH = str(BASE_DIR / "client.json")
 GOOGLE_TOKEN_JSON_PATH = str(BASE_DIR / "token.json")
@@ -18,9 +18,9 @@ LLM_SYSTEM_PROMPT = (
 
 class Settings(BaseSettings):
     APP_NAME: str = "AIssistant"
-    DATABASE_URL: str = ""
-    SECRET_KEY: str = ""
+    DATABASE_URL: str = "mysql://root:zyrl_root@127.0.0.1:3306/aissistant"
     DEBUG: bool = True
+    SECRET_KEY: str = ""
     # GOOGLE CALENDAR
     GOOGLE_CLIENT_JSON_PATH: str = GOOGLE_CLIENT_JSON_PATH
     GOOGLE_TOKEN_JSON_PATH: str = GOOGLE_TOKEN_JSON_PATH
