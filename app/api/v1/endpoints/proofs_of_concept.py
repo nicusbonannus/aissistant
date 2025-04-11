@@ -1,13 +1,14 @@
-from fastapi import Depends
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 from starlette import status
 
-from app.api.v1.endpoints.events import router
 from app.db import crud
 from app.db.database import get_db
 from app.db.schemas import UserCreate
 from app.services.llm_handler import LLMHandler
+
+router = APIRouter()
 
 
 class CreateUserInfo(BaseModel):

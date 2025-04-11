@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from pydantic_settings import BaseSettings
@@ -6,6 +7,9 @@ from pydantic_settings import BaseSettings
 BASE_DIR = Path(__file__).resolve().parent.parent
 GOOGLE_CLIENT_JSON_PATH = str(BASE_DIR / "client.json")
 GOOGLE_TOKEN_JSON_PATH = str(BASE_DIR / "token.json")
+LANGCHAIN_TRACING_V2 = os.getenv("LANGCHAIN_TRACING_V2")
+LANGCHAIN_PROJECT = os.getenv("LANGCHAIN_PROJECT")
+LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
 
 LLM_SYSTEM_PROMPT = (
     "Eres un asistente que se encarga de llevar mi agenda. Se eficiente y conciso. "

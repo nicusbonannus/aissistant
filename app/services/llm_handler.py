@@ -1,7 +1,9 @@
 from langchain.agents import AgentType, initialize_agent
 from langchain.schema import HumanMessage, SystemMessage
 from langchain_core.tools import StructuredTool
+from langchain_core.tracers.context import tracing_v2_enabled
 from langchain_openai import ChatOpenAI
+from langsmith import Client
 from pydantic import BaseModel, Field
 
 from app.core.config import settings
@@ -26,12 +28,14 @@ discount_tool = StructuredTool(
 
 class LLMHandler:
     def __init__(self):
+        self.client = Client()
         self._llm = ChatOpenAI(
             model=settings.LLM_MODEL_NAME,
             max_tokens=400,
             temperature=0.7,
             api_key=settings.LLM_SECRET_KEY,
             base_url=settings.LLM_PROVIDER_URL,
+            verbose=True,
         )
 
     def find_spot(self, agenda, event_description: str) -> str:
@@ -42,9 +46,10 @@ class LLMHandler:
             HumanMessage(message),
         ]
 
-        response = self._llm.invoke(messages)
+        with tracing_v2_enabled():
+            response = self._llm.invoke(messages)
 
-        return response.content
+            return response.content
 
     def analyze_agenda(self, agenda_events: list) -> str:
         initial_context = (
@@ -57,9 +62,10 @@ class LLMHandler:
             ),
         ]
 
-        response = self._llm.invoke(messages)
+        with tracing_v2_enabled():
+            response = self._llm.invoke(messages)
 
-        return response.content
+            return response.content
 
     def tool_example(self, price: float, discount: float) -> float:
         agent = initialize_agent(
@@ -70,5 +76,7 @@ class LLMHandler:
         )
 
         question = f"Si un producto cuesta ${price} y tiene un {discount}% de descuento, cual es el precio final?"
-        response = agent.run(question)
-        return response
+
+        with tracing_v2_enabled():
+            response = agent.run(question)
+            return response
