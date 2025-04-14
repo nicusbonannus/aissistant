@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Tuple
+from typing import Optional, Tuple
 
 import pytz
 from googleapiclient.discovery import build
@@ -8,7 +8,9 @@ from app.utils.google_calendar import get_google_calendar_token
 
 
 class CalendarReader:
-    def get_calendar_events(self, start: datetime = None, end: datetime = None):
+    def get_calendar_events(
+        self, start: Optional[datetime] = None, end: Optional[datetime] = None
+    ):
         creds = get_google_calendar_token()
         service = build("calendar", "v3", credentials=creds)
 
@@ -38,7 +40,7 @@ class CalendarReader:
 
     @staticmethod
     def format_dates(
-        start_date: datetime = None, end_date: datetime = None
+        start_date: Optional[datetime] = None, end_date: Optional[datetime] = None
     ) -> Tuple[str, str]:
         tz = pytz.timezone("America/Argentina/Buenos_Aires")
         if start_date is None:

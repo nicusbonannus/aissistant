@@ -2,7 +2,7 @@ from app.services.llm_handler import LLMHandler
 
 
 class Trainer:
-    def generate_routine(self, description: str, try_new_exes: bool) -> str:
+    def generate_routine(self, description: str, try_new_exes: bool):
         """
         Generate a training routine based on the provided description.
         """

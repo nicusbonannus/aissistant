@@ -6,7 +6,7 @@ from langchain_core.tools import StructuredTool
 from langchain_core.tracers.context import tracing_v2_enabled
 from langchain_openai import ChatOpenAI
 from langsmith import Client
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, SecretStr
 
 from app.core.config import settings
 
@@ -35,7 +35,7 @@ class LLMHandler:
             model=settings.LLM_MODEL_NAME,
             max_tokens=400,
             temperature=temperature,
-            api_key=settings.LLM_SECRET_KEY,
+            api_key=SecretStr(settings.LLM_SECRET_KEY),
             base_url=settings.LLM_PROVIDER_URL,
             verbose=True,
             streaming=True,
@@ -72,7 +72,7 @@ class LLMHandler:
 
             return response.content
 
-    def tool_example(self, price: float, discount: float) -> float:
+    def tool_example(self, price: float, discount: float):
         agent = initialize_agent(
             tools=[discount_tool],
             llm=self._llm,
