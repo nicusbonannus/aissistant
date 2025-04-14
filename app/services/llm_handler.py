@@ -97,9 +97,7 @@ class LLMHandler:
 
         with tracing_v2_enabled():
             stream = self._llm.astream(messages)
-
             full_response = []
-
             async for chunk in stream:
                 if hasattr(chunk, "content"):
                     content = chunk.content
