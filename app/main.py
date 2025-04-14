@@ -6,7 +6,7 @@ from app.core.config import settings
 tags_metadata = [
     {
         "name": "test",
-        "description": "Pruebas de concepto y herramientas.",
+        "description": "Proofs of concept.",
     },
     {
         "name": "exercises",

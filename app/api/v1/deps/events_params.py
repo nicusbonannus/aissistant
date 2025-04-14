@@ -14,7 +14,7 @@ class RequestByDateRangeParams(BaseModel):
     )
 
     @root_validator
-    def check_dates(cls, values):
+    def check_dates(self, values):
         start = values.get("start")
         end = values.get("end")
         if start > end:
