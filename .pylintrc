@@ -1,5 +1,5 @@
 [MASTER]
-ignore=alembic
+ignore=alembic/versions/**,env.py
 
 [MESSAGES CONTROL]
 disable=
