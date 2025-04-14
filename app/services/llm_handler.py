@@ -27,17 +27,18 @@ discount_tool = StructuredTool(
 
 
 class LLMHandler:
-    def __init__(self):
+    def __init__(self, temperature: float = 0.1):
         self.client = Client()
         self._llm = ChatOpenAI(
             model=settings.LLM_MODEL_NAME,
             max_tokens=400,
-            temperature=0.7,
+            temperature=temperature,
             api_key=settings.LLM_SECRET_KEY,
             base_url=settings.LLM_PROVIDER_URL,
             verbose=True,
         )
 
+    # deprecated
     def find_spot(self, agenda, event_description: str) -> str:
         initial_context = f"{settings.LLM_SYSTEM_PROMPT} Mi agenda es: {str(agenda)}."
         message = f"¿En que momento mañana puedo hacer este evento:{event_description}?"
@@ -51,6 +52,7 @@ class LLMHandler:
 
             return response.content
 
+    # deprecated
     def analyze_agenda(self, agenda_events: list) -> str:
         initial_context = (
             f"{settings.LLM_SYSTEM_PROMPT} Mi agenda es: {str(agenda_events)}."
@@ -80,3 +82,16 @@ class LLMHandler:
         with tracing_v2_enabled():
             response = agent.run(question)
             return response
+
+    def generate_routine(self, description: str) -> str:
+        messages = [
+            SystemMessage(content=settings.LLM_SYSTEM_PROMPT),
+            HumanMessage(
+                f"Genera una rutina de gym para hoy enfocada en los siguientes musculos: {str(description)}. "
+                f"No expliques los ejercicios."
+            ),
+        ]
+
+        with tracing_v2_enabled():
+            response = self._llm.invoke(messages)
+            return response.content
