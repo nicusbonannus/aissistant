@@ -16,3 +16,10 @@ disable=
 
 [FORMAT]
 max-line-length=120
+
+[TYPECHECK]
+ignore-mixin-members=yes
+ignored-modules=flask_sqlalchemy,ujson
+ignored-classes=optparse.Values,thread._local,_thread._local,scoped_session,alembic.op
+generated-members=query,objects
+contextmanager-decorators=contextlib.contextmanager
