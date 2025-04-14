@@ -1,5 +1,6 @@
 from fastapi import APIRouter, status
 from pydantic import BaseModel, Field
+from starlette.responses import StreamingResponse
 
 from app.services.trainer import Trainer
 
@@ -18,10 +19,18 @@ class GenerateRoutineParams(BaseModel):
 
 
 @router.post("/generate_routine", status_code=status.HTTP_200_OK)
-def generate_routine(request: GenerateRoutineParams, response_model=None):
+async def generate_routine(request: GenerateRoutineParams):
     trainer = Trainer()
-    return {
-        "summary": trainer.generate_routine(
+
+    return StreamingResponse(
+        trainer.generate_routine(
             description=request.description, try_new_exes=request.try_new_exes
-        )
-    }
+        ),
+        media_type="text/plain",
+    )
+
+    # return {
+    #     "summary": trainer.generate_routine(
+    #         description=request.description, try_new_exes=request.try_new_exes
+    #     )
+    # }

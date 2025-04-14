@@ -1,3 +1,5 @@
+import asyncio
+
 from langchain.agents import AgentType, initialize_agent
 from langchain.schema import HumanMessage, SystemMessage
 from langchain_core.tools import StructuredTool
@@ -36,6 +38,7 @@ class LLMHandler:
             api_key=settings.LLM_SECRET_KEY,
             base_url=settings.LLM_PROVIDER_URL,
             verbose=True,
+            streaming=True,
         )
 
     # deprecated
@@ -83,7 +86,7 @@ class LLMHandler:
             response = agent.run(question)
             return response
 
-    def generate_routine(self, description: str) -> str:
+    async def generate_routine(self, description: str):
         messages = [
             SystemMessage(content=settings.LLM_SYSTEM_PROMPT),
             HumanMessage(
@@ -93,5 +96,13 @@ class LLMHandler:
         ]
 
         with tracing_v2_enabled():
-            response = self._llm.invoke(messages)
-            return response.content
+            stream = self._llm.astream(messages)
+
+            full_response = []
+
+            async for chunk in stream:
+                if hasattr(chunk, "content"):
+                    content = chunk.content
+                    yield content
+                    full_response.append(content)
+                    await asyncio.sleep(0.2)

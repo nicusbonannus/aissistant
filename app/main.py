@@ -5,12 +5,12 @@ from app.core.config import settings
 
 tags_metadata = [
     {
-        "name": "events",
-        "description": "Endpoints para manejar eventos del calendario.",
-    },
-    {
         "name": "test",
         "description": "Pruebas de concepto y herramientas.",
+    },
+    {
+        "name": "exercises",
+        "description": "Generate exercises routines for a given set of muscles.",
     },
 ]
 
