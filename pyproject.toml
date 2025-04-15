@@ -7,7 +7,7 @@ name = "aissistant"
 version = "0.1.0"
 
 [tool.setuptools]
-packages = ["app"]  
+packages = ["app"]
 include-package-data = true
 
 [tool.setuptools.package-data]

@@ -53,7 +53,7 @@ class LLMHandler:
         with tracing_v2_enabled():
             response = self._llm.invoke(messages)
 
-            return response.content
+            return str(response.content)
 
     # deprecated
     def analyze_agenda(self, agenda_events: list) -> str:
@@ -70,7 +70,7 @@ class LLMHandler:
         with tracing_v2_enabled():
             response = self._llm.invoke(messages)
 
-            return response.content
+            return str(response.content)
 
     def tool_example(self, price: float, discount: float):
         agent = initialize_agent(
