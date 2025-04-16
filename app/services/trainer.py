@@ -9,5 +9,5 @@ class Trainer:
         temperature = 0.8 if try_new_exes else 0.0
 
         return LLMHandler(temperature=temperature).generate_routine(
-            description=description
+            muscles_groups=description
         )

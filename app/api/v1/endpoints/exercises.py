@@ -10,6 +10,7 @@ router = APIRouter()
 class GenerateRoutineParams(BaseModel):
     description: str = Field(
         max_length=200,
+        examples=["biceps"],
         description="Description of the muscles to train, the type of training (e.g., strength, cardio)",
     )
     try_new_exes: bool = Field(
@@ -28,9 +29,3 @@ async def generate_routine(request: GenerateRoutineParams):
         ),
         media_type="text/plain",
     )
-
-    # return {
-    #     "summary": trainer.generate_routine(
-    #         description=request.description, try_new_exes=request.try_new_exes
-    #     )
-    # }

@@ -2,6 +2,11 @@ import asyncio
 
 from langchain.agents import AgentType, initialize_agent
 from langchain.schema import HumanMessage, SystemMessage
+from langchain_core.prompts import (
+    ChatPromptTemplate,
+    HumanMessagePromptTemplate,
+    SystemMessagePromptTemplate,
+)
 from langchain_core.tools import StructuredTool
 from langchain_core.tracers.context import tracing_v2_enabled
 from langchain_openai import ChatOpenAI
@@ -86,16 +91,22 @@ class LLMHandler:
             response = agent.run(question)
             return response
 
-    async def generate_routine(self, description: str):
-        messages = [
-            SystemMessage(content=settings.LLM_SYSTEM_PROMPT),
-            HumanMessage(
-                f"Genera una rutina de gym para hoy enfocada en los siguientes musculos: {str(description)}. "
-                f"No expliques los ejercicios."
-            ),
-        ]
+    async def generate_routine(self, muscles_groups: str):
+        routine_prompt = ChatPromptTemplate.from_messages(
+            [
+                SystemMessagePromptTemplate.from_template("{system_prompt}"),
+                HumanMessagePromptTemplate.from_template(
+                    "Genera una rutina de gym para hoy enfocada en los siguientes músculos: {muscle_groups}. "
+                    "No expliques los ejercicios."
+                ),
+            ]
+        )
 
         with tracing_v2_enabled():
+            messages = routine_prompt.format_messages(
+                system_prompt=settings.LLM_SYSTEM_PROMPT,
+                muscle_groups=muscles_groups,
+            )
             stream = self._llm.astream(messages)
             full_response = []
             async for chunk in stream:

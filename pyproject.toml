@@ -12,3 +12,7 @@ include-package-data = true
 
 [tool.setuptools.package-data]
 exclude = ["alembic*"]
+
+[tool.isort]
+profile = "black"  # Critical for compatibility
+line_length = 88   # Must match black's default
