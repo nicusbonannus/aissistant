@@ -1,11 +1,10 @@
 # Personal Event Management API
 
-This project is an **exploration** of integrating an API using **FastAPI**, **SQLAlchemy**, **Google Calendar**, and a **Large Language Model (LLM)** to effectively manage a personal event agenda.
+This project is an **exploration** of integrating an API using **FastAPI**, **SQLAlchemy**, **Google Calendar**, and a **Large Language Model (LLM)** to create an trainer for GYM exercises. 
 
 ## Features
 
-- **Event Scheduling**: Create, update, and manage personal events.
-- **Google Calendar Integration**: Sync events, read schedules, and highlight important reminders.
+- **Routine generator**: Generate exercises routines based on the specifications of the user, like muscles to be trained and injuries.
 - **LLM-Powered Assistance**:
   - Suggest **event locations**.
   - Identify the **best time slots** for new events.
@@ -16,12 +15,9 @@ This project is an **exploration** of integrating an API using **FastAPI**, **SQ
 
 - **FastAPI**: For building the RESTful API.
 - **SQLAlchemy**: For database management.
-- **Google Calendar API**: For event synchronization.
-- **LLM (Large Language Model)**: For intelligent scheduling and recommendations.
-
-## Goal
-
-The goal of this project is to explore how LLMs can enhance personal event management by providing smart recommendations, improving scheduling efficiency, and integrating seamlessly with Google Calendar.
+- **LangChain**: To communicate with the LLM services.
+- **LangSmith**: For tracking and debugging LLM interactions.
+- **LLM (Large Language Model)**: For intelligent routines and recommendations.
 
 ## Installation & Setup
 
