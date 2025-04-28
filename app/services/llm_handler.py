@@ -1,12 +1,9 @@
 import asyncio
+from typing import AsyncGenerator
 
 from langchain.agents import AgentType, initialize_agent
 from langchain.schema import HumanMessage, SystemMessage
-from langchain_core.prompts import (
-    ChatPromptTemplate,
-    HumanMessagePromptTemplate,
-    SystemMessagePromptTemplate,
-)
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import StructuredTool
 from langchain_core.tracers.context import tracing_v2_enabled
 from langchain_openai import ChatOpenAI
@@ -36,7 +33,10 @@ discount_tool = StructuredTool(
 class LLMHandler:
     def __init__(self, temperature: float = 0.1):
         self.client = Client()
-        self._llm = ChatOpenAI(
+        self._llm = self._initialize_llm(temperature)
+
+    def _initialize_llm(self, temperature):
+        return ChatOpenAI(
             model=settings.LLM_MODEL_NAME,
             max_tokens=400,
             temperature=temperature,
@@ -91,27 +91,56 @@ class LLMHandler:
             response = agent.run(question)
             return response
 
-    async def generate_routine(self, muscles_groups: str):
-        routine_prompt = ChatPromptTemplate.from_messages(
+    def build_prompt(
+        self, muscles_groups: str, injuries_summary: str
+    ) -> ChatPromptTemplate:
+        return ChatPromptTemplate.from_messages(
             [
-                SystemMessagePromptTemplate.from_template("{system_prompt}"),
-                HumanMessagePromptTemplate.from_template(
-                    "Genera una rutina de gym para hoy enfocada en los siguientes músculos: {muscle_groups}. "
-                    "No expliques los ejercicios."
+                SystemMessage(content="Eres un entrenador profesional."),
+                HumanMessage(
+                    content=f"""Genera rutina para: {muscles_groups}.
+                        Lesiones: {injuries_summary}. Solo lista ejercicios."""
                 ),
             ]
         )
 
-        with tracing_v2_enabled():
-            messages = routine_prompt.format_messages(
-                system_prompt=settings.LLM_SYSTEM_PROMPT,
-                muscle_groups=muscles_groups,
-            )
-            stream = self._llm.astream(messages)
-            full_response = []
-            async for chunk in stream:
-                if hasattr(chunk, "content"):
-                    content = chunk.content
-                    yield content
-                    full_response.append(content)
-                    await asyncio.sleep(0.2)
+    async def astream_response(
+        self, muscles_groups: str, injuries_summary: str
+    ) -> AsyncGenerator[str, None]:
+        prompt = self.build_prompt(muscles_groups, injuries_summary)
+        messages = prompt.format_messages()
+
+        stream = self._llm.astream(messages)
+        async for chunk in stream:
+            if hasattr(chunk, "content"):
+                yield chunk.content
+                await asyncio.sleep(0.1)
+
+    #
+    # async def generate_routine(self, muscles_groups: str, injuries: List[Injury]) -> AsyncGenerator[str, None]:
+    #     injuries_summary = " - ".join([f"{injury.body_part_name}:{injury.illness_name}" for injury in injuries])
+    #     routine_prompt = ChatPromptTemplate.from_messages(
+    #         [
+    #             SystemMessagePromptTemplate.from_template("{system_prompt}"),
+    #             HumanMessagePromptTemplate.from_template(
+    #                 "Genera una rutina de gym para hoy enfocada en los siguientes músculos: {muscle_groups}. "
+    #                 f"Tengo los siguientes dolores: {injuries_summary}"
+    #                 "No expliques los ejercicios."
+    #             ),
+    #         ]
+    #     )
+    #
+    #     with tracing_v2_enabled():
+    #         messages = routine_prompt.format_messages(
+    #             system_prompt=settings.LLM_SYSTEM_PROMPT,
+    #             muscle_groups=muscles_groups,
+    #             injuries_summary=injuries_summary,
+    #         )
+    #         stream = self._llm.astream(messages)
+    #         full_response = []
+    #         async for chunk in stream:
+    #             if hasattr(chunk, "content"):
+    #                 content = chunk.content
+    #                 yield content
+    #                 full_response.append(content)
+    #                 await asyncio.sleep(0.2)

@@ -1,7 +1,10 @@
 from fastapi import APIRouter, status
+from fastapi.params import Depends
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 from starlette.responses import StreamingResponse
 
+from app.db.database import get_db
 from app.services.trainer import Trainer
 
 router = APIRouter()
@@ -20,12 +23,13 @@ class GenerateRoutineParams(BaseModel):
 
 
 @router.post("/generate_routine", status_code=status.HTTP_200_OK)
-async def generate_routine(request: GenerateRoutineParams):
-    trainer = Trainer()
-
+async def generate_routine(
+    request: GenerateRoutineParams, db: Session = Depends(get_db)
+):
+    trainer = Trainer(db)
     return StreamingResponse(
         trainer.generate_routine(
             description=request.description, try_new_exes=request.try_new_exes
         ),
-        media_type="text/plain",
+        media_type="text/event-stream",
     )
