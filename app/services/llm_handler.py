@@ -92,22 +92,24 @@ class LLMHandler:
             return response
 
     def build_prompt(
-        self, muscles_groups: str, injuries_summary: str
+        self, muscles_groups: str, injuries_summary: str, available_time: int
     ) -> ChatPromptTemplate:
         return ChatPromptTemplate.from_messages(
             [
                 SystemMessage(content="Eres un entrenador profesional."),
                 HumanMessage(
                     content=f"""Genera rutina para: {muscles_groups}.
-                        Lesiones: {injuries_summary}. Solo lista ejercicios."""
+                        Minutos disponibles: {available_time}.
+                        Ambos lados del cuerpo deben ser trabajados por igual.
+                        Lesiones: {injuries_summary}. Solo lista ejercicios con repeticiones y series."""
                 ),
             ]
         )
 
     async def astream_response(
-        self, muscles_groups: str, injuries_summary: str
+        self, muscles_groups: str, injuries_summary: str, available_time: int = 60
     ) -> AsyncGenerator[str, None]:
-        prompt = self.build_prompt(muscles_groups, injuries_summary)
+        prompt = self.build_prompt(muscles_groups, injuries_summary, available_time)
         messages = prompt.format_messages()
 
         stream = self._llm.astream(messages)
@@ -115,32 +117,3 @@ class LLMHandler:
             if hasattr(chunk, "content"):
                 yield chunk.content
                 await asyncio.sleep(0.1)
-
-    #
-    # async def generate_routine(self, muscles_groups: str, injuries: List[Injury]) -> AsyncGenerator[str, None]:
-    #     injuries_summary = " - ".join([f"{injury.body_part_name}:{injury.illness_name}" for injury in injuries])
-    #     routine_prompt = ChatPromptTemplate.from_messages(
-    #         [
-    #             SystemMessagePromptTemplate.from_template("{system_prompt}"),
-    #             HumanMessagePromptTemplate.from_template(
-    #                 "Genera una rutina de gym para hoy enfocada en los siguientes músculos: {muscle_groups}. "
-    #                 f"Tengo los siguientes dolores: {injuries_summary}"
-    #                 "No expliques los ejercicios."
-    #             ),
-    #         ]
-    #     )
-    #
-    #     with tracing_v2_enabled():
-    #         messages = routine_prompt.format_messages(
-    #             system_prompt=settings.LLM_SYSTEM_PROMPT,
-    #             muscle_groups=muscles_groups,
-    #             injuries_summary=injuries_summary,
-    #         )
-    #         stream = self._llm.astream(messages)
-    #         full_response = []
-    #         async for chunk in stream:
-    #             if hasattr(chunk, "content"):
-    #                 content = chunk.content
-    #                 yield content
-    #                 full_response.append(content)
-    #                 await asyncio.sleep(0.2)

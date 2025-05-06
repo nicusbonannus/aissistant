@@ -11,7 +11,7 @@ class Trainer:
         self._db = db
 
     async def generate_routine(
-        self, description: str, try_new_exes: bool
+        self, description: str, try_new_exes: bool, available_time: int
     ) -> AsyncGenerator[str, None]:
         injuries = self._db.query(Injury).all()
         injuries_summary = " - ".join(
@@ -20,5 +20,7 @@ class Trainer:
 
         llm_handler = LLMHandler(temperature=0.8 if try_new_exes else 0.0)
 
-        async for chunk in llm_handler.astream_response(description, injuries_summary):
+        async for chunk in llm_handler.astream_response(
+            description, injuries_summary, available_time
+        ):
             yield chunk
