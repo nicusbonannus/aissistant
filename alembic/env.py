@@ -17,7 +17,8 @@ if config.config_file_name is not None:
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 from app.db.database import Base
 
-import app.db.models
+from app.db.models.exercise_logs import ExerciseLog
+from app.db.models.injury import Injury
 
 target_metadata = Base.metadata
 
