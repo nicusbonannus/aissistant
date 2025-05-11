@@ -30,6 +30,25 @@ discount_tool = StructuredTool(
 )
 
 
+class LogExerciseInput(BaseModel):
+    muscles_worked: str = Field(
+        ..., description="Musculos trabajados separados por comas"
+    )
+    duration: int = Field(..., description="Duracion del ejercicio en minutos")
+
+
+def log_exercise(muscles_worked: str, duration: int) -> str:
+    return f"Ejercicio registrado: {muscles_worked} durante {duration} minutos."
+
+
+log_exercise_tool = StructuredTool(
+    name="Registro de ejercicios",
+    description="Registra un ejercicio con los musculos trabajados y la duracion en minutos",
+    func=log_exercise,
+    args_schema=LogExerciseInput,
+)
+
+
 class LLMHandler:
     def __init__(self, temperature: float = 0.1):
         self.client = Client()
