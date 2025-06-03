@@ -20,7 +20,9 @@ LLM_SYSTEM_PROMPT = (
 
 class Settings(BaseSettings):
     APP_NAME: str = "AIssistant"
-    DATABASE_URL: str = "mysql://root:zyrl_root@127.0.0.1:3306/aissistant"
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL", "mysql://root:zyrl_root@db:3306/aissistant"
+    )
     DEBUG: bool = True
     SECRET_KEY: str = ""
     # GOOGLE CALENDAR
@@ -31,6 +33,10 @@ class Settings(BaseSettings):
     LLM_SYSTEM_PROMPT: str = LLM_SYSTEM_PROMPT
     LLM_MODEL_NAME: str = "deepseek-ai/DeepSeek-V3"
     LLM_PROVIDER_URL: str = "https://api.kluster.ai/v1"
+    # LangChain
+    LANGCHAIN_API_KEY: str = ""
+    LANGCHAIN_PROJECT: str = "default"
+    LANGCHAIN_TRACING_V2: bool = True
 
     class Config:
         env_file = ".env"
